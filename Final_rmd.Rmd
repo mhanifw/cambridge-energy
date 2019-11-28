@@ -9,29 +9,85 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE)
 
 library(sf)
+library(fs)
 library(janitor)
 library(tidyverse)
 ```
 
-```{r}
+```{r data_prep}
 
-# Download
+```
 
-cambridge_shp <- 
-  st_read("raw-data/CambridgeMA_Shp/") %>%
+```{r data_write}
+
+```
+
+
+
+```{r map_prep}
+
+parcels_shp <- 
+  st_read("raw-data/parcels/") %>%
   st_as_sf()
 
-write_rds(cambridge_shp, path = "clean-data/cambridge_shp.rds")
+write_rds(parcels_shp, path = "clean-data/parcels.rds")
+
+neighborhoods <- 
+  st_read("raw-data/neighborhoods/") %>%
+  st_as_sf()
+
+write_rds(neighborhoods, path = "clean-data/neighborhoods.rds")
+
+parcel_index <- 
+  st_read("raw-data/index/") %>%
+  st_as_sf()
+
+write_rds(neighborhoods, path = "clean-data/parcel_index.rds")
+```
+
+```{r map_write}
+
+# Read parcels data
+
+parcels_shp <- 
+  read_rds("clean-data/parcels.rds") %>%
+  clean_names()
+
+parcels_shp <- 
+  parcels_shp %>%
+  mutate(map_lot = ml) %>%
+  select(map_lot, shape_st_ar, shape_st_le, geometry)
+
+```
+
+
+```{r shiny_export}
+
+file_copy(path = "clean-data/neighborhoods.rds", 
+          new_path = "cambridge-energy-use/shiny-data/neighborhoods.rds")
+
+file_copy(path = "clean-data/parcels.rds", 
+          new_path = "cambridge-energy-use/shiny-data/parcels.rds")
+
+file_copy(path = "clean-data/parcel_index.rds", 
+          new_path = "cambridge-energy-use/shiny-data/parcel_index.rds")
 ```
 
 ```{r}
+# Read neighborhoods data
 
-# Read map data
+neighborhoods_shp <- 
+  read_rds("clean-data/neighborhoods.rds") %>%
+  clean_names()
+```
 
-cambridge_shp <- read_rds("clean-data/cambridge_shp.rds")
 
+```{r map_viz}
 
-
+ggplot() +
+  geom_sf(data = parcels_shp) +
+  geom_sf(data = neighborhoods_shp, color = "red", alpha = 0)
 
 ```
+
 

@@ -7,19 +7,28 @@
 #    http://shiny.rstudio.com/
 #
 
+# Libraries
 library(shiny)
+library(sf)
+library(fs)
+library(janitor)
 library(markdown)
+library(tidyverse)
 
 navbarPage("Cambridge: Buildings & Energy",
            tabPanel("In a glance",
                     sidebarLayout(
                         sidebarPanel(
-                            includeMarkdown("about.md"),
-                            
-                            includeMarkdown("about2.md")
+                            #Write-up 1: Cambridge MA
+                            includeMarkdown("about.md")
                         ),
                         mainPanel(
-                            plotOutput("plot")
+                            
+                            #Plot neighborhoods
+                            plotOutput("neighborhoods_map"),
+                            
+                            #Plot index
+                            plotOutput("index_map")
                         )
                     )
            ),
