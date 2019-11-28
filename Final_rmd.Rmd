@@ -1,0 +1,37 @@
+---
+title: "Final_Rmd"
+author: "Hanif Wicaksono"
+date: "11/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(sf)
+library(janitor)
+library(tidyverse)
+```
+
+```{r}
+
+# Download
+
+cambridge_shp <- 
+  st_read("raw-data/CambridgeMA_Shp/") %>%
+  st_as_sf()
+
+write_rds(cambridge_shp, path = "clean-data/cambridge_shp.rds")
+```
+
+```{r}
+
+# Read map data
+
+cambridge_shp <- read_rds("clean-data/cambridge_shp.rds")
+
+
+
+
+```
+
