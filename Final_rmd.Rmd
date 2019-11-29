@@ -42,12 +42,12 @@ parcel_index <-
   st_read("raw-data/index/") %>%
   st_as_sf()
 
-write_rds(neighborhoods, path = "clean-data/parcel_index.rds")
+write_rds(parcel_index, path = "clean-data/parcel_index.rds")
 ```
 
 ```{r map_write}
 
-# Read parcels data
+# Read data
 
 parcels_shp <- 
   read_rds("clean-data/parcels.rds") %>%
@@ -58,10 +58,17 @@ parcels_shp <-
   mutate(map_lot = ml) %>%
   select(map_lot, shape_st_ar, shape_st_le, geometry)
 
+parcel_index <-
+  parcel_index %>%
+  clean_names()
+
 ```
 
 
 ```{r shiny_export}
+file_delete(path = "cambridge-energy-use/shiny-data/")
+
+dir_create(path = "cambridge-energy-use/shiny-data")
 
 file_copy(path = "clean-data/neighborhoods.rds", 
           new_path = "cambridge-energy-use/shiny-data/neighborhoods.rds")
@@ -73,20 +80,13 @@ file_copy(path = "clean-data/parcel_index.rds",
           new_path = "cambridge-energy-use/shiny-data/parcel_index.rds")
 ```
 
-```{r}
-# Read neighborhoods data
-
-neighborhoods_shp <- 
-  read_rds("clean-data/neighborhoods.rds") %>%
-  clean_names()
-```
-
 
 ```{r map_viz}
 
 ggplot() +
-  geom_sf(data = parcels_shp) +
-  geom_sf(data = neighborhoods_shp, color = "red", alpha = 0)
+  # geom_sf(data = parcels_shp) +
+  geom_sf(data = parcel_index)
+  # geom_sf(data = neighborhoods_shp, color = "red", alpha = 0)
 
 ```
 

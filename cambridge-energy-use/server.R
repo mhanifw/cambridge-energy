@@ -56,9 +56,49 @@ shinyServer(function(input, output) {
             )
     })
     
-    # Output 2: Cambridge Parcels Map
+    # Output 3: Cambridge Parcels Map
+    output$parcels_map <- renderPlot({
+        ggplot() +
+            geom_sf(data = parcels_shp) +
+            labs(
+                title = "Cambridge MA Parcels",
+                subtitle = "2019 Parcel Index",
+                caption = "Data source: City of Cambridge, MA"
+            )
+    })
     
-    # Output 3: Energy usage plot
+    # Output 4: CombinedMap
+    output$render_map <- renderPlot({
+        
+        neighborhoods_map <-
+            ggplot() +
+            geom_sf(data = neighborhoods_shp, aes(fill = name)) +
+            labs(
+                title = "Cambridge MA Neighborhoods",
+                subtitle = "2019 boundaries",
+                caption = "Data source: City of Cambridge, MA"
+            )
+        
+        index_map <-
+            ggplot() +
+            geom_sf(data = parcel_index_shp) +
+            labs(
+                title = "Cambridge MA Neighborhoods",
+                subtitle = "2019 Parcel Index",
+                caption = "Data source: City of Cambridge, MA"
+            )
+        
+        parcels_map <-
+            ggplot() +
+            geom_sf(data = parcels_shp) +
+            labs(
+                title = "Cambridge MA Parcels",
+                subtitle = "2019 Parcel Index",
+                caption = "Data source: City of Cambridge, MA"
+            )
+    })
+    
+    # Output 4: Energy usage plot
     
     #Dummy outputs
     output$plot <- renderPlot({

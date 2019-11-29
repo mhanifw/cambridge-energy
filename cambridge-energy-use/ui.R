@@ -20,15 +20,30 @@ navbarPage("Cambridge: Buildings & Energy",
                     sidebarLayout(
                         sidebarPanel(
                             #Write-up 1: Cambridge MA
-                            includeMarkdown("about.md")
+                            includeMarkdown("about.md"),
+                            
+                            #Spacing
+                            hr(),
+                            
+                            #selectInput for Map
+                            selectInput("variable", "Variable:",
+                                        c("Neighborhoods" = "neighborhoods_map",
+                                          "Parcel index" = "index_map",
+                                          "Parcels" = "parcels_map"))
                         ),
                         mainPanel(
                             
-                            #Plot neighborhoods
-                            plotOutput("neighborhoods_map"),
+                            # #Plot neighborhoods
+                            # plotOutput("neighborhoods_map"),
                             
-                            #Plot index
-                            plotOutput("index_map")
+                            # #Plot index
+                            # plotOutput("index_map"),
+                            # 
+                            # #Plot parcels
+                            # plotOutput("parcels_map")
+                          
+                            #Plot parcels
+                            plotOutput("render_map")
                         )
                     )
            ),
