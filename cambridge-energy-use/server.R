@@ -94,6 +94,34 @@ shinyServer(function(input, output) {
         
     })
     
+    output$electric_use <- renderPlot ({
+        
+        energyuse %>%
+            filter(reporting_year == input$energy_year, 
+                   report_type != "Child", 
+                   electricity_use_grid_purchase_k_wh != "NA") %>%
+            group_by(property_type) %>%
+            summarize(sumKwh = sum(electricity_use_grid_purchase_k_wh)) %>%
+            mutate(total = sum(sumKwh)) %>%
+            mutate(percentage = sumKwh / total) %>%
+            ggplot(aes(x = property_type, y = sumKwh)) +
+            geom_col(aes(fill = property_type))
+    })
+    
+    output$water_use <- renderPlot ({
+        
+        energyuse %>%
+            filter(reporting_year == input$energy_year, 
+                   report_type != "Child", 
+                   water_use_all_water_sources_kgal != "NA") %>%
+            group_by(property_type) %>%
+            summarize(sumKgal = sum(water_use_all_water_sources_kgal)) %>%
+            mutate(total = sum(sumKgal)) %>%
+            mutate(percentage = sumKgal / total) %>%
+            ggplot(aes(x = property_type, y = sumKgal)) +
+            geom_col(aes(fill = property_type))
+    })
+    
     #Dummy outputs
     output$plot <- renderPlot({
         plot(cars, type=input$plotType)

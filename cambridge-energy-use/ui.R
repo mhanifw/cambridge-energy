@@ -55,9 +55,9 @@ navbarPage("Cambridge: Buildings & Energy",
              fixedRow(
                column(12,
                       "Level 1 column",
+                      # Row 1: Buildings age
                       fixedRow(
                         column(3,
-                               #Buildings age
                                includeMarkdown("md/2_buildings_age.md"),
                                sliderInput("year_built",
                                            label = h4("Year built:"),
@@ -69,12 +69,34 @@ navbarPage("Cambridge: Buildings & Energy",
                                plotOutput("buildings_age")
                           )
                         ),
+                      # Row 2: Who consumes?
+                      fixedRow(
+                        hr(),
+                        column(4,
+                               "Level 2 column left",
+                               includeMarkdown("md/2_energy_use.md"),
+                               selectInput("energy_year",
+                                           label = "Year:",
+                                           choices = c(2016, 2017),
+                                           selected = 2016)),
+                        column(4,
+                               "Level 2 column mid",
+                               plotOutput("electric_use")
+                               #plot output electic here
+                               ),
+                        column(4,
+                               "Level 2 column right",
+                               plotOutput("water_use")
+                               #plot output water here
+                               )
+                      ),
+                      # Row 3: Energy sources
                       fixedRow(
                         hr(),
                         column(5,
-                               "Level 2 column left"),
+                               "Level 3 column left"),
                         column(7,
-                               "Level 2 column right")
+                               "Level 3 column right")
                       )
                     ),
                   )
