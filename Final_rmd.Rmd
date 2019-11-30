@@ -14,6 +14,84 @@ library(janitor)
 library(tidyverse)
 ```
 
+```{r}
+labels1 <-
+  str_replace_all(string = energyuse$property_type,
+                  pattern = c("Residence Hall/Dormitory",
+                              "Vocational School"
+                             ),
+                  replacement = "College/University")
+
+labels2 <-
+  str_replace_all(string = labels1,
+                  pattern = c("Residence Hall/Dormitory",
+                              "Vocational School",
+                              "Data Center",
+                              "Financial Office",
+                              "Manufacturing/Industrial Plant"
+                              
+                             ),
+                  replacement = "Office")
+
+labels3 <-
+  str_replace_all(string = labels2,
+                  pattern = c("Mixed Use Property",
+                              "Supermarket/Grocery Store",
+                              "Fitness Center/Health Club/Gym",
+                              "Retail Store",
+                              "Parking",
+                              "Automobile Dealership",
+                              "Strip Mall",
+                              "Food Service",
+                              "Enclosed Mall",
+                              "Self-Storage Facility",
+                              "Other - Mall"
+                              
+                              ),
+                  replacement = "Business")
+
+labels4 <-
+  str_replace_all(string = labels3,
+                  pattern = c("Worship Facility",
+                              "Fire Station",
+                              "Hospital (General Medical & Surgical)",
+                              "Library",
+                              "Museum",
+                              "Police Station",
+                              "Other - Public Services",
+                              "Vocational School",
+                              "Drinking Water Treatment & Distribution",
+                              "Senior Care Community",
+                              "Urgent Care/Clinic/Other Outpatient"
+                              ),
+                  replacement = "Public services")
+
+labels5 <-
+  str_replace_all(string = labels5,
+                  pattern = c("Other - Education",
+                              "Other - Lodging/Residential",
+                              "Food Service",
+                              "Other",
+                              "Other - Recreation"
+                              ),
+                  replacement = "Others")
+```
+
+```{r}
+
+#year = input$energy_year
+
+year = 2018
+
+energyuse %>%
+  mutate(property_type = labels2) %>%
+  filter(reporting_year == year, report_type != "Child") %>%
+  group_by(property_type) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+```
+
+
 ```{r data_prep}
 energyuse <-
   read_csv(file = "raw-data/Cambridge_Building_Energy_and_Water_Use_Data_Disclosure_2016-2018.csv") %>%
@@ -29,29 +107,18 @@ file_copy(path = "clean-data/energyuse.rds",
 energyuse <-
   read_rds(path = "cambridge-energy-use/shiny-data/energyuse.rds")
 
-min_built = input$year_built[1]
-max_built = input$year_built[2]
+# min_built = input$year_built[1]
+# max_built = input$year_built[2]
+
+min_built = 1700
+max_built = 2016
 
 energyuse %>%
   filter(reporting_year == 2018, report_type != "Child") %>%
   filter(year_built > min_built & year_built < max_built) %>%
   ggplot(aes(x = year_built)) +
-  geom_histogram(aes(fill = "property_type"))
+  geom_histogram(aes(fill = property_type))
 ```
-
-
-```{r}
-labels <-
-  str_replace_all(string = energyuse$property_type,
-                  pattern = "Residence Hall/Dormitory")
-
-energyuse %>%
-  filter(reporting_year == 2018, report_type != "Child") %>%
-  group_by(property_type) %>%
-  summarize(n = n()) %>%
-  arrange(desc(n))
-```
-
 
 ```{r map_prep}
 

@@ -81,6 +81,7 @@ shinyServer(function(input, output) {
         
         energyuse %>%
             filter(reporting_year == 2018, report_type != "Child") %>%
+            
             filter(year_built > min_built & year_built < max_built) %>%
             ggplot(aes(x = year_built)) +
             geom_histogram(aes(fill = property_type)) +

@@ -52,19 +52,32 @@ navbarPage("Cambridge: Buildings & Energy",
            
            tabPanel(
              "In a glance",
-                  fluidRow(
-                     column(3,
-                       includeMarkdown("md/2_buildings_age.md"),
-                       sliderInput("year_built",
-                                  label = h4("Year built:"),
-                                  min = 1800,
-                                  max = 2016,
-                                  value = c(1960, 2010))
-                      ),
-                     column(9,
-                       plotOutput("buildings_age")
-                       )
+             fixedRow(
+               column(12,
+                      "Level 1 column",
+                      fixedRow(
+                        column(3,
+                               #Buildings age
+                               includeMarkdown("md/2_buildings_age.md"),
+                               sliderInput("year_built",
+                                           label = h4("Year built:"),
+                                           min = 1700,
+                                           max = 2016,
+                                           value = c(1976, 2016))
+                        ),
+                        column(9,
+                               plotOutput("buildings_age")
+                          )
+                        ),
+                      fixedRow(
+                        hr(),
+                        column(5,
+                               "Level 2 column left"),
+                        column(7,
+                               "Level 2 column right")
+                      )
                     ),
+                  )
            ),
            
            # Panel 3: Analysis
