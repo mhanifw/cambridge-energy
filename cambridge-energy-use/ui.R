@@ -45,27 +45,35 @@ navbarPage("Cambridge: Buildings & Energy",
                                                plotOutput("parcels_map"),
                                                includeMarkdown("md/1_parcels.md")))
                           )
-
                         )
            ),
            
            # Panel 2: In a glance
            
-           tabPanel("In a glance",
-                    
-                    verbatimTextOutput("summary")
+           tabPanel(
+             "In a glance",
+                  fluidRow(
+                     column(3,
+                       includeMarkdown("md/2_buildings_age.md"),
+                       sliderInput("year_built",
+                                  label = h4("Year built:"),
+                                  min = 1800,
+                                  max = 2016,
+                                  value = c(1960, 2010))
+                      ),
+                     column(9,
+                       plotOutput("buildings_age")
+                       )
+                    ),
            ),
            
            # Panel 3: Analysis
            
            tabPanel("Analysis",
-                    
-                    verbatimTextOutput("summary")
            ),
            
            # Panel 4: About
            
            tabPanel("About",
-                               DT::dataTableOutput("table")
                       )
            )

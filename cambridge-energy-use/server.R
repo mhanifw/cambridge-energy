@@ -34,6 +34,11 @@ shinyServer(function(input, output) {
         read_rds("shiny-data/neighborhoods.rds") %>%
         clean_names()
     
+    # Page 2 Objects
+
+    energyuse <-
+        read_rds(path = "shiny-data/energyuse.rds")
+    
     # Output 1_1: Cambridge Neighborhoods Map
     output$neighborhoods_map <- renderPlot({
         ggplot() +
@@ -67,7 +72,26 @@ shinyServer(function(input, output) {
             )
     })
     
-    # Output 4: Energy usage plot
+    # Output 2_1: Cambridge Buildings Histogram
+    
+    output$buildings_age <- renderPlot({
+
+        min_built = input$year_built[1]
+        max_built = input$year_built[2]
+        
+        energyuse %>%
+            filter(reporting_year == 2018, report_type != "Child") %>%
+            filter(year_built > min_built & year_built < max_built) %>%
+            ggplot(aes(x = year_built)) +
+            geom_histogram(aes(fill = property_type)) +
+            labs(
+                title = "How old are buildings in Cambridge?",
+                subtitle = "Only shows nonresidential properties 50,000 sqft, residential properties with 50 or more units, and municipal properties > 10,000 sqft",
+                x = "Year built",
+                y = "Count"
+            )
+        
+    })
     
     #Dummy outputs
     output$plot <- renderPlot({
