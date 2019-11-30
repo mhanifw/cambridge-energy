@@ -6,3 +6,4 @@
 *raw-data
 *clean-data
 *.Rproj
+*.DS_Store
