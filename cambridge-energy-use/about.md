@@ -1,3 +1,0 @@
-## Buildings in Cambridge, MA
-
-Energy and water use information submitted by property owners and managers is shown for properties that first began reporting in the 2015 BEUDO reporting cycle. These include nonresidential properties 50,000 square feet or more, residential properties with 50 or more units and municipal properties 10,000 square feet or more. In 2016, nonresidential properties 25,000 square feet or more began submitting reports for the first time and their data was disclosed beginning in 2017.

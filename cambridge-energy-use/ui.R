@@ -15,45 +15,57 @@ library(janitor)
 library(markdown)
 library(tidyverse)
 
+# Title
 navbarPage("Cambridge: Buildings & Energy",
-           tabPanel("In a glance",
+           
+           # Panel 1: Classifications
+           
+           tabPanel("Classifications",
                     sidebarLayout(
                         sidebarPanel(
-                            #Write-up 1: Cambridge MA
-                            includeMarkdown("about.md"),
-                            
-                            #Spacing
-                            hr(),
-                            
-                            #selectInput for Map
-                            selectInput("variable", "Variable:",
-                                        c("Neighborhoods" = "neighborhoods_map",
-                                          "Parcel index" = "index_map",
-                                          "Parcels" = "parcels_map"))
-                        ),
+                            # Write-up 1: Cambridge MA
+                            includeMarkdown("md/about.md"),
+                                    ),
                         mainPanel(
-                            
-                            # #Plot neighborhoods
-                            # plotOutput("neighborhoods_map"),
-                            
-                            # #Plot index
-                            # plotOutput("index_map"),
-                            # 
-                            # #Plot parcels
-                            # plotOutput("parcels_map")
                           
-                            #Plot parcels
-                            plotOutput("render_map")
+                          tabsetPanel(type = "tabs",
+                                      # Neighborhood map
+                                      tabPanel("Neighborhood", 
+                                               hr(),
+                                               plotOutput("neighborhoods_map"),
+                                               includeMarkdown("md/1_neighborhoods.md")),
+                                      # Parcel index map
+                                      tabPanel("Parcel index", 
+                                               hr(),
+                                               plotOutput("index_map"),
+                                               includeMarkdown("md/1_parcels_index.md")),
+                                      # Parcels map
+                                      tabPanel("Parcels", 
+                                               hr(),
+                                               plotOutput("parcels_map"),
+                                               includeMarkdown("md/1_parcels.md")))
+                          )
+
                         )
-                    )
            ),
-           tabPanel("Summary",
+           
+           # Panel 2: In a glance
+           
+           tabPanel("In a glance",
+                    
                     verbatimTextOutput("summary")
            ),
-           navbarMenu("More",
-                      tabPanel("Table",
+           
+           # Panel 3: Analysis
+           
+           tabPanel("Analysis",
+                    
+                    verbatimTextOutput("summary")
+           ),
+           
+           # Panel 4: About
+           
+           tabPanel("About",
                                DT::dataTableOutput("table")
-                      ),
-                      tabPanel("About")
                       )
            )
