@@ -11,9 +11,14 @@
 library(shiny)
 library(sf)
 library(fs)
+library(plotly)
 library(janitor)
 library(markdown)
 library(tidyverse)
+
+# Objects
+
+
 
 # Title
 navbarPage("Cambridge: Buildings & Energy",
@@ -58,14 +63,22 @@ navbarPage("Cambridge: Buildings & Energy",
                       # Row 1: Buildings age
                       fixedRow(
                         column(3,
+                               # markdown buildings age
                                includeMarkdown("md/2_buildings_age.md"),
+                               # sliderInput year built
                                sliderInput("year_built",
                                            label = h4("Year built:"),
                                            min = 1700,
                                            max = 2016,
-                                           value = c(1976, 2016))
+                                           value = c(1976, 2016)),
+                               # sliderInput year
+                               selectInput("granularity",
+                                           label = "Granularity:",
+                                           choices = c(2017, 2018) %>%
+                                             `names<-`(c("By group", "By types"))),
                         ),
                         column(9,
+                               #plot output buildings age - histogram
                                plotOutput("buildings_age")
                           )
                         ),
@@ -74,20 +87,23 @@ navbarPage("Cambridge: Buildings & Energy",
                         hr(),
                         column(4,
                                "Level 2 column left",
+                               # markdown who consume
                                includeMarkdown("md/2_energy_use.md"),
+                               # sliderInput year
                                selectInput("energy_year",
                                            label = "Year:",
                                            choices = c(2016, 2017),
                                            selected = 2016)),
                         column(4,
                                "Level 2 column mid",
+                               #plot output electric - bar
                                plotOutput("electric_use")
-                               #plot output electic here
+                               
                                ),
                         column(4,
                                "Level 2 column right",
+                               #plot output water - bar
                                plotOutput("water_use")
-                               #plot output water here
                                )
                       ),
                       # Row 3: Energy sources

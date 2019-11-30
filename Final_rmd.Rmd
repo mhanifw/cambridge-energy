@@ -14,6 +14,19 @@ library(janitor)
 library(tidyverse)
 ```
 
+
+
+```{r data_prep}
+energyuse <-
+  read_csv(file = "raw-data/Cambridge_Building_Energy_and_Water_Use_Data_Disclosure_2016-2018.csv") %>%
+  clean_names() %>%
+  write_rds(path = "clean-data/energyuse.rds")
+
+file_copy(path = "clean-data/energyuse.rds", 
+          new_path = "cambridge-energy-use/shiny-data/energyuse.rds")
+```
+
+
 ```{r who consume}
 
 #input$energy_year
@@ -42,17 +55,6 @@ energyuse %>%
   geom_col(aes(fill = property_type))
            
   
-```
-
-
-```{r data_prep}
-energyuse <-
-  read_csv(file = "raw-data/Cambridge_Building_Energy_and_Water_Use_Data_Disclosure_2016-2018.csv") %>%
-  clean_names() %>%
-  write_rds(path = "clean-data/energyuse.rds")
-
-file_copy(path = "clean-data/energyuse.rds", 
-          new_path = "cambridge-energy-use/shiny-data/energyuse.rds")
 ```
 
 ```{r data_write}
@@ -140,6 +142,24 @@ file_copy(path = "clean-data/parcels.rds",
 
 file_copy(path = "clean-data/parcel_index.rds", 
           new_path = "cambridge-energy-use/shiny-data/parcel_index.rds")
+
+
+# Read rds cleaned
+
+parcels_shp <- 
+        read_rds("cambridge-energy-use/shiny-data/parcels.rds") %>%
+        clean_names() %>%
+        mutate(map_lot = ml) %>%
+        select(map_lot, shape_st_ar, shape_st_le, geometry)
+    
+    parcel_index_shp <- 
+        read_rds("cambridge-energy-use/shiny-data/parcel_index.rds") %>%
+        clean_names()
+    
+    neighborhoods_shp <- 
+        read_rds("cambridge-energy-use/shiny-data/neighborhoods.rds") %>%
+        clean_names()
+
 ```
 
 

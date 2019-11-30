@@ -11,9 +11,15 @@
 library(shiny)
 library(sf)
 library(fs)
+library(plotly)
 library(janitor)
 library(markdown)
 library(tidyverse)
+
+# Plotly
+
+Sys.setenv("plotly_username"="mhanifw")
+Sys.setenv("plotly_api_key"="tWeknMdPvifFQ1mfxkZR")
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
@@ -78,13 +84,13 @@ shinyServer(function(input, output) {
 
         min_built = input$year_built[1]
         max_built = input$year_built[2]
+        granularity = input$granularity
         
         energyuse %>%
-            filter(reporting_year == 2018, report_type != "Child") %>%
-            
+            filter(reporting_year == granularity, report_type != "Child") %>%
             filter(year_built > min_built & year_built < max_built) %>%
             ggplot(aes(x = year_built)) +
-            geom_histogram(aes(fill = property_type)) +
+            geom_histogram(aes(fill = property_type), color = "white") +
             labs(
                 title = "How old are buildings in Cambridge?",
                 subtitle = "Only shows nonresidential properties 50,000 sqft, residential properties with 50 or more units, and municipal properties > 10,000 sqft",
@@ -105,7 +111,14 @@ shinyServer(function(input, output) {
             mutate(total = sum(sumKwh)) %>%
             mutate(percentage = sumKwh / total) %>%
             ggplot(aes(x = property_type, y = sumKwh)) +
-            geom_col(aes(fill = property_type))
+            geom_col(aes(fill = property_type)) +
+            labs(
+                title = "Electricity usage",
+                subtitle = "From all sources, by group",
+                x = "",
+                y = "Total kWh"
+            ) +
+            theme(legend.position = "none")
     })
     
     output$water_use <- renderPlot ({
@@ -119,7 +132,14 @@ shinyServer(function(input, output) {
             mutate(total = sum(sumKgal)) %>%
             mutate(percentage = sumKgal / total) %>%
             ggplot(aes(x = property_type, y = sumKgal)) +
-            geom_col(aes(fill = property_type))
+            geom_col(aes(fill = property_type)) +
+            labs(
+                title = "Water usage",
+                subtitle = "From all sources, by group",
+                x = "",
+                y = "Total kgal"
+            ) +
+            theme(legend.position = "none")
     })
     
     #Dummy outputs
