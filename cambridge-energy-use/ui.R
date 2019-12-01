@@ -37,12 +37,12 @@ navbarPage("Cambridge: Buildings & Energy",
                                       # Neighborhood map
                                       tabPanel("Neighborhood", 
                                                hr(),
-                                               plotOutput("neighborhoods_map"),
+                                               plotlyOutput("neighborhoods_map"),
                                                includeMarkdown("md/1_neighborhoods.md")),
                                       # Parcel index map
                                       tabPanel("Parcel index", 
                                                hr(),
-                                               plotOutput("index_map"),
+                                               plotlyOutput("index_map"),
                                                includeMarkdown("md/1_parcels_index.md")),
                                       # Parcels map
                                       tabPanel("Parcels", 

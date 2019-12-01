@@ -41,35 +41,46 @@ shinyServer(function(input, output) {
         clean_names()
     
     # Page 2 Objects
-
+    
     energyuse <-
         read_rds(path = "shiny-data/energyuse.rds")
     
     # Output 1_1: Cambridge Neighborhoods Map
-    output$neighborhoods_map <- renderPlot({
-        ggplot() +
+    output$neighborhoods_map <- renderPlotly({
+        
+        x <- 
+            ggplot() +
             geom_sf(data = neighborhoods_shp, aes(fill = name)) +
             labs(
                 title = "Cambridge MA Neighborhoods",
                 subtitle = "Official 2019 Boundaries",
                 caption = "Data source: City of Cambridge, MA"
             )
-        })
+        
+        ggplotly(x)
+        
+    })
     
-    # Output 1_2: Cambridge Parcels Index Map
-    output$index_map <- renderPlot({
-        ggplot() +
-            geom_sf(data = parcel_index_shp) +
+    # Output 1_2b: Plotly Cambridge Parcels Index Map
+    output$index_map <- renderPlotly({
+        x <- 
+            ggplot() +
+            geom_sf(data = parcel_index_shp, aes(text = pcix_no)) +
             labs(
                 title = "Cambridge MA Parcel index",
                 subtitle = "Official 2019 Boundaries",
                 caption = "Data source: City of Cambridge, MA"
             )
+        
+        ggplotly(x)
+        
     })
+    
     
     # Output 1_3: Cambridge Parcels Map
     output$parcels_map <- renderPlot({
-        ggplot() +
+        
+            ggplot() +
             geom_sf(data = parcels_shp) +
             labs(
                 title = "Cambridge MA Parcels",
@@ -81,7 +92,7 @@ shinyServer(function(input, output) {
     # Output 2_1: Cambridge Buildings Histogram
     
     output$buildings_age <- renderPlot({
-
+        
         min_built = input$year_built[1]
         max_built = input$year_built[2]
         granularity = input$granularity
