@@ -12,54 +12,37 @@ library(shiny)
 library(sf)
 library(fs)
 library(plotly)
+library(treemapify)
 library(janitor)
 library(markdown)
 library(tidyverse)
 
 # Objects
 
+grid_electricity = energy_source$grid_electricity
+natural_gas = energy_source$natural_gas
+fuel_oil = energy_source$fuel_oil
+diesel = energy_source$diesel
+kerosene = energy_source$kerosene
+total_kbtu = energy_source$total_kbtu
 
+selected_source <- c(grid_electricity, 
+                     natural_gas, 
+                     fuel_oil, 
+                     diesel, 
+                     kerosene, 
+                     total_kbtu)
 
 # Title
 navbarPage("Cambridge: Buildings & Energy",
            
-           # Panel 1: Classifications
-           
-           tabPanel("Classifications",
-                    sidebarLayout(
-                        sidebarPanel(
-                            # Write-up 1: Cambridge MA
-                            includeMarkdown("md/about.md"),
-                                    ),
-                        mainPanel(
-                          
-                          tabsetPanel(type = "tabs",
-                                      # Neighborhood map
-                                      tabPanel("Neighborhood", 
-                                               hr(),
-                                               plotlyOutput("neighborhoods_map"),
-                                               includeMarkdown("md/1_neighborhoods.md")),
-                                      # Parcel index map
-                                      tabPanel("Parcel index", 
-                                               hr(),
-                                               plotlyOutput("index_map"),
-                                               includeMarkdown("md/1_parcels_index.md")),
-                                      # Parcels map
-                                      tabPanel("Parcels", 
-                                               hr(),
-                                               plotOutput("parcels_map"),
-                                               includeMarkdown("md/1_parcels.md")))
-                          )
-                        )
-           ),
-           
-           # Panel 2: In a glance
+           # Panel 1: In a glance
            
            tabPanel(
              "In a glance",
              fixedRow(
                column(12,
-                      "Level 1 column",
+                      #"Level 1 column",
                       # Row 1: Buildings age
                       fixedRow(
                         column(3,
@@ -71,56 +54,115 @@ navbarPage("Cambridge: Buildings & Energy",
                                            min = 1700,
                                            max = 2016,
                                            value = c(1976, 2016)),
-                               # sliderInput year
+                               # selectInput granularity
                                selectInput("granularity",
                                            label = "Granularity:",
                                            choices = c(2017, 2018) %>%
                                              `names<-`(c("By group", "By types"))),
                         ),
                         column(9,
+                               br(),
                                #plot output buildings age - histogram
-                               plotOutput("buildings_age")
-                          )
+                               plotlyOutput("buildings_age")
+                              )
                         ),
                       # Row 2: Who consumes?
                       fixedRow(
                         hr(),
-                        column(4,
-                               "Level 2 column left",
-                               # markdown who consume
-                               includeMarkdown("md/2_energy_use.md"),
-                               # sliderInput year
-                               selectInput("energy_year",
-                                           label = "Year:",
-                                           choices = c(2016, 2017),
-                                           selected = 2016)),
-                        column(4,
-                               "Level 2 column mid",
-                               #plot output electric - bar
-                               plotOutput("electric_use")
+                        column(3,
+                               # "Level 3 column left",
+                               # markdown energy source
+                               includeMarkdown("md/2_energy_source.md"),
                                
-                               ),
-                        column(4,
-                               "Level 2 column right",
-                               #plot output water - bar
-                               plotOutput("water_use")
+                               # selectInput energy source
+                               selectInput("source_type",
+                                           label = "Energy source:",
+                                           choices = c("Grid electricity" = "grid_electricity",
+                                                       "Natural gas" = "natural_gas",
+                                                       "Fuel oil" = "fuel_oil",
+                                                       "Diesel" = "diesel",
+                                                       "Kerosene" = "kerosene",
+                                                       "Total (kBtu)" = "total_kbtu"),
+                                           selected = "Total (kBtu)")),
+                        column(9,
+                               # "Level 2 column right",
+                               # plot output energy source
+                               plotOutput("energy_source_treemap")
                                )
-                      ),
+                        ),
                       # Row 3: Energy sources
                       fixedRow(
                         hr(),
-                        column(5,
-                               "Level 3 column left"),
-                        column(7,
-                               "Level 3 column right")
+                        column(3,
+                                "Level 3 column left"
+                               ),
+                        column(9,
+                               "Level 3 column right",
+                               ),
                       )
-                    ),
-                  )
+                    )
+                  ),
+             br(),
+             hr(),
+           ),
+           
+           # Panel 2: Classifications
+           
+           tabPanel("Classifications",
+                    sidebarLayout(
+                      sidebarPanel(
+                        # Write-up 1: Cambridge MA
+                        includeMarkdown("md/about.md"),
+                      ),
+                      mainPanel(
+                        
+                        tabsetPanel(type = "tabs",
+                                    # Neighborhood map
+                                    tabPanel("Neighborhood", 
+                                             hr(),
+                                             plotlyOutput("neighborhoods_map"),
+                                             includeMarkdown("md/1_neighborhoods.md")),
+                                    # Parcel index map
+                                    tabPanel("Parcel index", 
+                                             hr(),
+                                             plotlyOutput("index_map"),
+                                             includeMarkdown("md/1_parcels_index.md")),
+                                    # Parcels map
+                                    tabPanel("Parcels", 
+                                             hr(),
+                                             plotOutput("parcels_map"),
+                                             includeMarkdown("md/1_parcels.md")))
+                      )
+                    )
            ),
            
            # Panel 3: Analysis
            
            tabPanel("Analysis",
+                    fixedRow(
+                      column(12,
+                             
+                             h2("Spatial visualizations by Parcel index"),
+                             hr(),
+                             
+                               column(3,
+                                      # markdown energy source
+                                      includeMarkdown("md/3_energy_map.md"),
+                                      # selectInput energy source
+                                      selectInput("map_type",
+                                                  label = "Map type:",
+                                                  choices = c("Total energy use (kBtu)" = "energy_total",
+                                                              "Energy intensity (kBtu/sqft)" = "energy_intensity",
+                                                              "Total GHG emission (tons)" = "ghg_emission_total",
+                                                              "GHG emission intensity (tons/sqft)" = "ghg_emission_intensity",
+                                                              "Total water use (kgal)" = "water_total",
+                                                              "Water intensity (kgal/sqft)" = "water_intensity"))
+                               ),
+                               column(9,
+                                      plotlyOutput("energy_map")
+                                      )
+                             )
+                    )
            ),
            
            # Panel 4: About

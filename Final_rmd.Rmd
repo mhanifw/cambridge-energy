@@ -10,21 +10,172 @@ knitr::opts_chunk$set(echo = FALSE)
 
 library(sf)
 library(fs)
+library(ggthemes)
 library(janitor)
 library(tidyverse)
 ```
 
+```{r}
+
+parcel_index_map <-
+  read_rds(path = "cambridge-energy-use/shiny-data/parcel_index.rds")
+
+energy_map <-
+  read_rds(path = "cambridge-energy-use/shiny-data/energyuse.rds") %>%
+  separate(col = map_lot, into = c("parcel_index", "parcel_id"), sep = "-") %>%
+  filter(report_type != "Child") %>%
+  select(reporting_year,
+         parcel_index, 
+         grantee, 
+         source_energy_use_k_btu, 
+         source_eui_k_btu_ft2,
+         total_ghg_emissions_metric_tons_co2e,
+         total_ghg_emissions_intensity_kg_co2e_ft2,
+         water_use_all_water_sources_kgal,
+         water_intensity_all_water_sources_gal_ft2
+         )
+
+energy_map[is.na(energy_map)] <- 0
+
+write_rds(x = energy_map, path = "cambridge-energy-use/shiny-data/energy_map.rds")
+
+```
+
+```{r}
+parcel_index_map
+```
+
+
+```{r energy_map_prep}
+
+energy_sf <-
+  energy_map %>%
+  filter(reporting_year == 2018) %>%
+  mutate(PCIX_NO = parcel_index) %>%
+  group_by(PCIX_NO) %>%
+  summarize(parcel_energy_use = sum(source_energy_use_k_btu),
+            parcel_energy_intensity = sum(source_eui_k_btu_ft2),
+            parcel_ghg_emission = sum(total_ghg_emissions_metric_tons_co2e),
+            parcel_ghg_intensity = sum(total_ghg_emissions_intensity_kg_co2e_ft2),
+            parcel_water_use = sum(water_use_all_water_sources_kgal),
+            parcel_water_intensity = sum(water_intensity_all_water_sources_gal_ft2)) %>%
+  right_join(x = energy_sf, y = parcel_index_map, by = "PCIX_NO") %>%
+  st_as_sf()
+
+write_rds(x = energy_sf, path = "cambridge-energy-use/shiny-data/energy_map.rds")
+```
+
+```{r energy_map_plot}
+
+energy_sf %>%
+  ggplot() +
+  geom_sf(aes(fill = parcel_energy_use)) +
+            labs(
+                title = "Cambridge MA Parcels",
+                subtitle = "Official 2019 Boundaries",
+                caption = "Data source: City of Cambridge, MA"
+            )
+
+```
 
 
 ```{r data_prep}
 energyuse <-
   read_csv(file = "raw-data/Cambridge_Building_Energy_and_Water_Use_Data_Disclosure_2016-2018.csv") %>%
-  clean_names() %>%
+  clean_names()
+
+energyuse %>%
   write_rds(path = "clean-data/energyuse.rds")
 
 file_copy(path = "clean-data/energyuse.rds", 
           new_path = "cambridge-energy-use/shiny-data/energyuse.rds")
 ```
+
+```{r}
+energyuse[is.na(energyuse)] <- 0
+
+# min_built = input$year_built[1]
+# max_built = input$year_built[2]
+
+energy_source <-
+  energyuse %>%
+  filter(primary_property_type_self_selected != 0,
+         reporting_year == 2018,
+         report_type != "Child") %>%
+  group_by(primary_property_type_self_selected) %>%
+  summarize(n_buildings = n(),
+            grid_electricity = sum(electricity_use_grid_purchase_k_btu),
+            natural_gas = sum(natural_gas_use_k_btu),
+            fuel_oil = sum(fuel_oil_number_1_use_k_btu + fuel_oil_number_2_use_k_btu + 
+                             fuel_oil_number_4_use_k_btu + fuel_oil_number_5_6_use_k_btu),
+            diesel = sum(diesel_number_2_use_k_btu),
+            kerosene = sum(kerosene_use_k_btu),
+            total_kbtu = grid_electricity + natural_gas + fuel_oil + diesel + kerosene) %>%
+  select(primary_property_type_self_selected, 
+         n_buildings,
+         grid_electricity, 
+         natural_gas,
+         fuel_oil,
+         diesel,
+         kerosene,
+         total_kbtu)
+
+write_rds(x = energy_source, path = "clean-data/energy_source.rds")
+
+file_copy(path = "clean-data/energy_source.rds", 
+          new_path = "cambridge-energy-use/shiny-data/energy_source.rds")
+```
+
+```{r}
+grid_electricity = energy_source$grid_electricity
+natural_gas = energy_source$natural_gas
+fuel_oil = energy_source$fuel_oil
+diesel = energy_source$diesel
+kerosene = energy_source$kerosene
+total_kbtu = energy_source$total_kbtu
+
+selected_source <- c(grid_electricity, 
+                     natural_gas, 
+                     fuel_oil, 
+                     diesel, 
+                     kerosene, 
+                     total_kbtu)
+
+  energy_source %>%
+  ggplot(aes(area = source_type, 
+             fill = primary_property_type_self_selected, 
+             label = primary_property_type_self_selected)) +
+  geom_treemap() +
+  geom_treemap_text() +
+  theme(legend.position = "none")
+```
+
+
+```{r energy_source}
+
+energyuse[is.na(energyuse)] <- 0
+
+energyuse %>%
+            filter(reporting_year == 2018, 
+                   report_type != "Child") %>%
+  group_by(electricity_use_generated_from_onsite_renewable_systems_k_wh) %>%
+  summarize(n = n()) %>%
+  mutate(renewable = ifelse(n != 1, "no", "yes")) %>%
+  select(n, renewable) %>%
+  group_by(n) %>%
+  summarize(yes = n()) %>%
+  mutate(n_renewable = n + yes,
+         total = sum(n_renewable),
+         prop_renewable = n_renewable/total) %>%
+  mutate(labels = c("Generate any renewable", "Doesn't generate any on-site renewable")) %>%
+  ggplot(aes(area = prop_renewable, fill = labels, label = labels)) + 
+  theme(legend.position = "none") +
+  geom_treemap() +
+  geom_treemap_text(place = "centre", grow = TRUE)
+  
+
+```
+
 
 
 ```{r who consume}
