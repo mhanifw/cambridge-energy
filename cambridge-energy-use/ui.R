@@ -17,22 +17,6 @@ library(janitor)
 library(markdown)
 library(tidyverse)
 
-# Objects
-
-grid_electricity = energy_source$grid_electricity
-natural_gas = energy_source$natural_gas
-fuel_oil = energy_source$fuel_oil
-diesel = energy_source$diesel
-kerosene = energy_source$kerosene
-total_kbtu = energy_source$total_kbtu
-
-selected_source <- c(grid_electricity, 
-                     natural_gas, 
-                     fuel_oil, 
-                     diesel, 
-                     kerosene, 
-                     total_kbtu)
-
 # Title
 navbarPage("Cambridge: Buildings & Energy",
            

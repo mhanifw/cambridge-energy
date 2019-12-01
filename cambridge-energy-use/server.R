@@ -199,29 +199,27 @@ shinyServer(function(input, output) {
     # Output 3_a: Plotly Cambridge Parcel index
     
     output$energy_map <- renderPlotly ({
-        
+
         map_type <- switch(input$map_type,
-                              energy_total = energy_map$parcel_energy_use[2:286],
-                              energy_intensity = energy_map$parcel_energy_intensity[2:286],
-                              ghg_emission_total = energy_map$parcel_ghg_emission[2:286],
-                              ghg_emission_intensity = energy_map$parcel_ghg_intensity[2:286],
-                              water_total = energy_map$water_use_all_water_sources_kgal[2:286],
-                              water_intensity = energy_map$water_intensity_all_water_sources_gal_ft2[2:286])
-        
+                              energy_total = energy_map$parcel_energy_use,
+                              energy_intensity = energy_map$parcel_energy_intensity,
+                              ghg_emission_total = energy_map$parcel_ghg_emission,
+                              ghg_emission_intensity = energy_map$parcel_ghg_intensity,
+                              water_total = energy_map$water_use_all_water_sources_kgal,
+                              water_intensity = energy_map$water_intensity_all_water_sources_gal_ft2)
+
         x <-
             energy_map %>%
-            # Removing outliar
-            filter(PCIX_NO != "52A") %>%
             ggplot() +
             geom_sf(aes(fill = map_type)) +
             labs(
-                title = "Cambridge MA Parcels",
+                title = "Cambridge MA Parcel index",
                 subtitle = "Official 2019 Boundaries",
                 caption = "Data source: City of Cambridge, MA"
-            )  
-        
+            )
+
         ggplotly(x)
-    
+
     })
     
     # Output 4

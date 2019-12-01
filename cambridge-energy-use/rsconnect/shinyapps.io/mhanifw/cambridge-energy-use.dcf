@@ -1,0 +1,12 @@
+name: cambridge-energy-use
+title: cambridge-energy-use
+username:
+account: mhanifw
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1541994
+bundleId: 2629837
+url: https://mhanifw.shinyapps.io/cambridge-energy-use/
+when: 1575193897.58333
+asMultiple: FALSE
+asStatic: FALSE
