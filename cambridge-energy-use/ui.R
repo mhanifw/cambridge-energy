@@ -112,7 +112,7 @@ navbarPage("Cambridge: Buildings & Energy",
                     sidebarLayout(
                       sidebarPanel(
                         # Write-up 1: Cambridge MA
-                        includeMarkdown("md/about.md"),
+                        includeMarkdown("md/1_about.md"),
                       ),
                       mainPanel(
                         
@@ -168,5 +168,13 @@ navbarPage("Cambridge: Buildings & Energy",
            # Panel 4: About
            
            tabPanel("About",
+                    fixedRow(
+                      column(6,
+                             includeMarkdown("md/4_about.md")
+                             ),
+                      column(6,
+                             imageOutput("about_img")
                       )
+                    )
+               )
            )

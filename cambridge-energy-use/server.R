@@ -224,6 +224,15 @@ shinyServer(function(input, output) {
     
     })
     
+    # Output 4
+    output$about_img <- renderImage({
+        filename <- normalizePath(file.path(".",
+                                            paste("cambridge.png")))
+        
+        # Return a list containing the filename
+        list(src = filename)
+    }, deleteFile = FALSE)
+    
     #Dummy outputs
     output$plot <- renderPlot({
         plot(cars, type=input$plotType)
