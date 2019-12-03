@@ -54,52 +54,7 @@ shinyServer(function(input, output) {
     energy_map <-
         read_rds(path = "shiny-data/energy_map.rds")
     
-    # Output 1_1: Cambridge Neighborhoods Map
-    output$neighborhoods_map <- renderPlotly({
-        
-        x <- 
-            ggplot() +
-            geom_sf(data = neighborhoods_shp, aes(fill = name)) +
-            labs(
-                title = "Cambridge MA Neighborhoods",
-                subtitle = "Official 2019 Boundaries",
-                caption = "Data source: City of Cambridge, MA"
-            ) +
-            theme(legend.position = "none")
-        
-        ggplotly(x)
-        
-    })
-    
-    # Output 1_2: Plotly Cambridge Parcels Index Map
-    output$index_map <- renderPlotly({
-        x <- 
-            ggplot() +
-            geom_sf(data = parcel_index_shp, aes(text = pcix_no)) +
-            labs(
-                title = "Cambridge MA Parcel index",
-                subtitle = "Official 2019 Boundaries",
-                caption = "Data source: City of Cambridge, MA"
-            )
-        
-        ggplotly(x)
-        
-    })
-    
-    
-    # Output 1_3: Cambridge Parcels Map
-    output$parcels_map <- renderPlot({
-        
-            ggplot() +
-            geom_sf(data = parcels_shp) +
-            labs(
-                title = "Cambridge MA Parcels",
-                subtitle = "Official 2019 Boundaries",
-                caption = "Data source: City of Cambridge, MA"
-            )
-    })
-    
-    # Output 2_1: Cambridge Buildings Histogram
+    # Output 1_1: Cambridge Buildings Histogram
     
     output$buildings_age <- renderPlotly({
         
@@ -124,57 +79,7 @@ shinyServer(function(input, output) {
         
     })
     
-    # Output 2_2_a: Energy use bar plot
-    
-    output$electric_use <- renderPlot ({
-        
-        energyuse %>%
-            filter(reporting_year == input$energy_year, 
-                   report_type != "Child", 
-                   site_energy_use_k_btu != "NA") %>%
-            group_by(property_type) %>%
-            summarize(sum_kBtu = sum(site_energy_use_k_btu)) %>%
-            mutate(total = sum(sum_kBtu)) %>%
-            ggplot(aes(x = property_type, y = sum_kBtu)) +
-            geom_col(aes(fill = property_type)) +
-            labs(
-                title = "Electricity usage",
-                subtitle = "From all sources, by group",
-                x = "",
-                y = "Total kBtu"
-            ) +
-            theme(legend.position = "none")
-    })
-    
-    # Output 2_2_a: Renewable use bar plot
-    
-    output$water_use <- renderPlot ({
-        
-        energyuse %>%
-            filter(reporting_year == input$energy_year, 
-                   report_type != "Child", 
-                   water_use_all_water_sources_kgal != "NA") %>%
-            group_by(property_type) %>%
-            summarize(sumKgal = sum(water_use_all_water_sources_kgal)) %>%
-            mutate(total = sum(sumKgal)) %>%
-            mutate(percentage = sumKgal / total) %>%
-            ggplot(aes(x = property_type, y = sumKgal)) +
-            geom_col(aes(fill = property_type)) +
-            labs(
-                title = "Water usage",
-                subtitle = "From all sources, by group",
-                x = "",
-                y = "Total kgal"
-            ) +
-            theme(legend.position = "none")
-    })
-    
-    # Output 2_3_a: Table
-    output$energy_source_table <- DT::renderDataTable({
-        DT::datatable(iris, options = list(lengthMenu = c(5, 30, 50), pageLength = 5))
-    })
-    
-    # Output 2_3_b: Energy source treemap
+    # Output 1_2: Energy source treemap
     
     output$energy_source_treemap <- renderPlot ({
         
@@ -196,33 +101,150 @@ shinyServer(function(input, output) {
         
     })
     
-    # Output 3_a: Plotly Cambridge Parcel index
-    
-    output$energy_map <- renderPlotly ({
-
-        map_type <- switch(input$map_type,
-                              energy_total = energy_map$parcel_energy_use,
-                              energy_intensity = energy_map$parcel_energy_intensity,
-                              ghg_emission_total = energy_map$parcel_ghg_emission,
-                              ghg_emission_intensity = energy_map$parcel_ghg_intensity,
-                              water_total = energy_map$water_use_all_water_sources_kgal,
-                              water_intensity = energy_map$water_intensity_all_water_sources_gal_ft2)
-
-        x <-
-            energy_map %>%
+    # Output 2_1: Plotly Cambridge Neighborhoods
+    output$neighborhoods_map <- renderPlotly({
+        
+        x <- 
             ggplot() +
-            geom_sf(aes(fill = map_type)) +
+            geom_sf(data = neighborhoods_shp, aes(fill = name)) +
+            labs(
+                title = "Cambridge MA Neighborhoods",
+                subtitle = "Official 2019 Boundaries",
+                caption = "Data source: City of Cambridge, MA"
+            ) +
+            theme(legend.position = "none")
+        
+        ggplotly(x)
+        
+    })
+    
+    # Output 2_2: Plotly Cambridge Parcels Index Map
+    output$index_map <- renderPlotly({
+        x <- 
+            ggplot() +
+            geom_sf(data = parcel_index_shp, aes(text = pcix_no)) +
             labs(
                 title = "Cambridge MA Parcel index",
                 subtitle = "Official 2019 Boundaries",
                 caption = "Data source: City of Cambridge, MA"
             )
-
+        
         ggplotly(x)
+        
+    })
+    
+    
+    # Output 2_3: Plotly Cambridge Parcels Map
+    output$parcels_map <- renderPlot({
+        
+        ggplot() +
+            geom_sf(data = parcels_shp) +
+            labs(
+                title = "Cambridge MA Parcels",
+                subtitle = "Official 2019 Boundaries",
+                caption = "Data source: City of Cambridge, MA"
+            )
+    })
+    
+    # Output 3_a: Plotly Energy map
+    
+    output$energy_map <- renderPlotly ({
+
+        map_type <- switch(input$energy_map_type,
+                              energy_intensity = energy_map$parcel_energy_intensity,
+                              energy_total = energy_map$parcel_energy_use)
+
+        x <-
+            energy_map %>%
+            ggplot(aes(fill = map_type)) +
+            scale_fill_gradient(name = "colors are in log scale",
+                                trans = "log",
+                                low = "white",
+                                high = "#F0A35C") +
+            geom_sf() +
+            labs(
+                title = "Electricity usage for each Parcel index in Cambridge",
+                subtitle = "Official 2019 Boundaries",
+                caption = "Data source: City of Cambridge, MA"
+            )
+        
+    ggplotly(x)
 
     })
     
-    # Output 4
+    # Output 3_b: Plotly Water map
+    
+    output$water_map <- renderPlotly ({
+        
+        map_type <- switch(input$water_map_type,
+                           water_intensity = energy_map$parcel_water_intensity,
+                           water_total = energy_map$parcel_water_use)
+        
+        x <-
+            energy_map %>%
+            ggplot(aes(fill = map_type)) +
+            scale_fill_gradient(name = "colors are in log scale",
+                                trans = "log",
+                                low = "white",
+                                high = "#2E74D1") +
+            geom_sf() +
+            labs(
+                title = "Water usage for each Parcel index in Cambridge",
+                subtitle = "Official 2019 Boundaries",
+                caption = "Data source: City of Cambridge, MA"
+            )
+        
+        ggplotly(x)
+        
+    })
+    
+    # Output 3_c: Plotly GHG map
+    
+    output$ghg_map <- renderPlotly ({
+        
+        map_type <- switch(input$ghg_map_type,
+                           ghg_intensity = energy_map$parcel_ghg_intensity,
+                           ghg_total = energy_map$parcel_ghg_emission)
+        
+        x <-
+            energy_map %>%
+            ggplot(aes(fill = map_type)) +
+            scale_fill_gradient(name = "colors are in log scale",
+                                trans = "log",
+                                low = "white",
+                                high = "#F46161") +
+            geom_sf() +
+            labs(
+                title = "Greenhouse gas emissions for each Parcel index in Cambridge",
+                subtitle = "Official 2019 Boundaries",
+                caption = "Data source: City of Cambridge, MA"
+            )
+        
+        ggplotly(x)
+        
+    })
+    
+    # Output 3_d: Regression line on multifamily housing and year built
+    
+    output$regression <- renderPlot({
+        
+        min_built = input$reg_year_built[1]
+        max_built = input$reg_year_built[2]
+        selected = input$reg_plot_type
+            
+            energyuse %>%
+            filter(report_type != "Child" & reporting_year == 2018) %>%
+            mutate(total_kbtu = as.numeric(source_energy_use_k_btu)) %>%
+            filter(primary_property_type_self_selected == selected,
+                   year_built > min_built & year_built < max_built) %>%
+            ggplot(aes(x = year_built, y = total_kbtu)) +
+            geom_point() + 
+            geom_smooth(method = "lm") +
+            theme(legend.position = "none")
+        
+    })
+    
+    # Output 4 cambridge image
     output$about_img <- renderImage({
         filename <- normalizePath(file.path(".",
                                             paste("cambridge.png")))

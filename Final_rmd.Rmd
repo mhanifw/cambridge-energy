@@ -1,5 +1,5 @@
 ---
-title: "Final_Rmd"
+title: "App_sketches"
 author: "Hanif Wicaksono"
 date: "11/28/2019"
 output: html_document
@@ -15,11 +15,81 @@ library(janitor)
 library(tidyverse)
 ```
 
-```{r}
+## This document is NOT meant to be knitted
+
+## Read objects from shiny rds
+
+```{r read_objects_shiny}
+
+neighborhoods_map <-
+  read_rds(path = "cambridge-energy-use/shiny-data/neighborhoods.rds")
 
 parcel_index_map <-
   read_rds(path = "cambridge-energy-use/shiny-data/parcel_index.rds")
 
+parcel_map <-
+  read_rds(path = "cambridge-energy-use/shiny-data/parcels.rds")
+
+energy_use <-
+  read_rds(path = "cambridge-energy-use/shiny-data/energyuse.rds")
+
+energy_source <-
+  read_rds(path = "cambridge-energy-use/shiny-data/energy_source.rds")
+
+energy_map <-
+  read_rds(path = "cambridge-energy-use/shiny-data/energy_map.rds")
+```
+
+## Below is unorganized R sketches to write objects and testing out visualizations
+
+```{r}
+energy_use %>%
+  filter(report_type != "Child" & reporting_year == 2018) %>%
+  group_by(primary_property_type_self_selected) %>%
+  count() %>%
+  arrange(desc(n))
+```
+
+
+```{r}
+
+
+# Laboratory Regression
+ 
+
+x <- energy_use 
+
+x[is.na(x)] <- "NA"
+```
+
+```{r}
+a <- "College/University"
+b <- "Multifamily Housing"
+c <- "Office"
+d <- "Laboratory"
+
+min_built = 1800
+max_built = 2016
+
+x_plot <- 
+   
+  x %>%
+  filter(report_type != "Child" & reporting_year == 2018) %>%
+  mutate(renewable_use = ifelse(electricity_use_generated_from_onsite_renewable_systems_k_wh != is.na(electricity_use_generated_from_onsite_renewable_systems_k_wh), 1, 0),
+         total_kbtu = as.numeric(source_energy_use_k_btu),
+         as.logical(renewable_use)) %>%
+  filter(primary_property_type_self_selected == b,
+         year_built > min_built & year_built < max_built) %>%
+  ggplot(aes(x = year_built, y = total_kbtu, color = renewable_use)) +
+  geom_point() + 
+  geom_smooth(method = "lm") +
+  theme(legend.position = "none")
+
+x_plot
+```
+
+
+```{r energy_map_prep}
 energy_map <-
   read_rds(path = "cambridge-energy-use/shiny-data/energyuse.rds") %>%
   separate(col = map_lot, into = c("parcel_index", "parcel_id"), sep = "-") %>%
@@ -39,14 +109,6 @@ energy_map[is.na(energy_map)] <- 0
 
 write_rds(x = energy_map, path = "cambridge-energy-use/shiny-data/energy_map.rds")
 
-```
-
-```{r}
-parcel_index_map
-```
-
-
-```{r energy_map_prep}
 
 energy_sf <-
   energy_map %>%
