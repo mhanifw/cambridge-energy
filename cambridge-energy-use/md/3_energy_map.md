@@ -1,3 +1,3 @@
 ## Energy, Water, & Greenhouse gas emissions
 
-Parcel index 52A (MIT nuclear fusion laboratory) was removed since the values are logarithmically high for all map types. The quick brown fox jumps over the lazy dog.
+Here we visualized Cambridge's total energy usage (or intensity per square foot) for each parcel index using cloropleth map. Electricity usage is highly concentrated within in MIT and Kendall Square area where there are many laboratories and office spaces. Meanwhile, water usage is highly concentrated by Fresh Pond area. GHG emissions map is closely matching the electricity use, considering electricity constitutes as significant contributor to GHG emissions than water.

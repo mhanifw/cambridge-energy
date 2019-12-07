@@ -1,3 +1,3 @@
 ## How old are buildings in Cambridge?
 
-Energy and water use information submitted by property owners and managers is shown for properties that first began reporting in the 2015 BEUDO reporting cycle. These include nonresidential properties 50,000 square feet or more, residential properties with 50 or more units and municipal properties 10,000 square feet or more. 
+According to City of Cambridge, energy use in buildings accounts for about 80% of GHG emissions in Cambridge, with two-thirds of the total related to commercial, institutional, and large multifamily buildings. For nonresidential properties that has area of 50,000 square feet or more, residential properties with 50 or more units and municipal properties 10,000 square feet, they all subject to report to Building Energy Use Disclosure Ordinance (BEUDO), which first enacted in 2014. This tool aims to visualize the distribution of energy use by building types and usages.
