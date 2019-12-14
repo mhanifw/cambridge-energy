@@ -48,8 +48,8 @@ navbarPage("Cambridge: Buildings & Energy",
                                br(),
                                #plot output buildings age - histogram
                                plotlyOutput("buildings_age")
-                              )
-                        ),
+                        )
+                      ),
                       # Row 2: Who consumes?
                       fixedRow(
                         hr(),
@@ -72,10 +72,10 @@ navbarPage("Cambridge: Buildings & Energy",
                                # "Level 2 column right",
                                # plot output energy source
                                plotOutput("energy_source_treemap")
-                               )
                         )
-                    )
-                  ),
+                      )
+               )
+             ),
              br()
            ),
            
@@ -84,24 +84,24 @@ navbarPage("Cambridge: Buildings & Energy",
            tabPanel("Classifications",
                     fixedRow(
                       column(4, 
-                        # Write-up 1: Cambridge MA
-                        includeMarkdown("md/1_about.md"),
+                             # Write-up 1: Cambridge MA
+                             includeMarkdown("md/1_about.md"),
                       ),
                       column(8,
-                        #Map Tabs
-                        tabsetPanel(type = "tabs",
-                                    # Neighborhood map
-                                    tabPanel("Neighborhood",
-                                             plotlyOutput("neighborhoods_map"),
-                                             includeMarkdown("md/1_neighborhoods.md")),
-                                    # Parcel index map
-                                    tabPanel("Parcel index",
-                                             plotlyOutput("index_map"),
-                                             includeMarkdown("md/1_parcels_index.md")),
-                                    # Parcels map
-                                    tabPanel("Parcels",
-                                             plotOutput("parcels_map"),
-                                             includeMarkdown("md/1_parcels.md")))
+                             #Map Tabs
+                             tabsetPanel(type = "tabs",
+                                         # Neighborhood map
+                                         tabPanel("Neighborhood",
+                                                  plotlyOutput("neighborhoods_map"),
+                                                  includeMarkdown("md/1_neighborhoods.md")),
+                                         # Parcel index map
+                                         tabPanel("Parcel index",
+                                                  plotlyOutput("index_map"),
+                                                  includeMarkdown("md/1_parcels_index.md")),
+                                         # Parcels map
+                                         tabPanel("Parcels",
+                                                  plotOutput("parcels_map"),
+                                                  includeMarkdown("md/1_parcels.md")))
                       )
                     )
            ),
@@ -111,74 +111,74 @@ navbarPage("Cambridge: Buildings & Energy",
            tabPanel("Analysis",
                     fixedRow(
                       column(12,
-                               column(3,
-                                      # markdown energy source
-                                      includeMarkdown("md/3_energy_map.md"),
-                                      # selectInput energy source
-                                      
-                               ),
-                               column(9,
-                                      tabsetPanel(type = "tabs",
-                                                  # tabPanel 1: Energy
-                                                  tabPanel("Energy",
-                                                           # selectInput energy map
-                                                           br(),
-                                                           selectInput("energy_map_type",
-                                                                       label = "Show:",
-                                                                       choices = c("Energy intensity (kBtu/sqft)" = "energy_intensity",
-                                                                                   "Total energy use (kBtu)" = "energy_total")),
-                                                           plotlyOutput("energy_map"),
-                                                           #includeMarkdown("md/1_neighborhoods.md")
-                                                           ),
-                                                  
-                                                  # tabPanel 2: Water
-                                                  tabPanel("Water", 
-                                                           # selectInput energy map
-                                                           br(),
-                                                           selectInput("water_map_type",
-                                                                       label = "Show:",
-                                                                       choices = c("Water intensity (kgal/sqft)" = "water_intensity",
-                                                                                   "Total water use (kgal)" = "water_total")),
-                                                           plotlyOutput("water_map")
-                                                           ),
-                                                  
-                                                  # tabPanel 3: Greenhouse gas emissions
-                                                  tabPanel("Greenhouse gas emissions", 
-                                                           # selectInput energy map
-                                                           br(),
-                                                           selectInput("ghg_map_type",
-                                                                       label = "Show:",
-                                                                       choices = c("Greenhouse gas intensity (kgCO2e/ft2)" = "ghg_intensity",
-                                                                                   "Total greenhouse gas emissions (kgCO2e)" = "ghg_total")),
-                                                           plotlyOutput("ghg_map")))
-                                       ),
+                             column(3,
+                                    # markdown energy source
+                                    includeMarkdown("md/3_energy_map.md"),
+                                    # selectInput energy source
+                                    
+                             ),
+                             column(9,
+                                    tabsetPanel(type = "tabs",
+                                                # tabPanel 1: Energy
+                                                tabPanel("Energy",
+                                                         # selectInput energy map
+                                                         br(),
+                                                         selectInput("energy_map_type",
+                                                                     label = "Show:",
+                                                                     choices = c("Energy intensity (kBtu/sqft)" = "energy_intensity",
+                                                                                 "Total energy use (kBtu)" = "energy_total")),
+                                                         plotlyOutput("energy_map"),
+                                                         #includeMarkdown("md/1_neighborhoods.md")
+                                                ),
+                                                
+                                                # tabPanel 2: Water
+                                                tabPanel("Water", 
+                                                         # selectInput energy map
+                                                         br(),
+                                                         selectInput("water_map_type",
+                                                                     label = "Show:",
+                                                                     choices = c("Water intensity (kgal/sqft)" = "water_intensity",
+                                                                                 "Total water use (kgal)" = "water_total")),
+                                                         plotlyOutput("water_map")
+                                                ),
+                                                
+                                                # tabPanel 3: Greenhouse gas emissions
+                                                tabPanel("Greenhouse gas emissions", 
+                                                         # selectInput energy map
+                                                         br(),
+                                                         selectInput("ghg_map_type",
+                                                                     label = "Show:",
+                                                                     choices = c("Greenhouse gas intensity (kgCO2e/ft2)" = "ghg_intensity",
+                                                                                 "Total greenhouse gas emissions (kgCO2e)" = "ghg_total")),
+                                                         plotlyOutput("ghg_map")))
+                             ),
                              br(),
-                                 column(3,
-                                        
-                                        includeMarkdown("md/3_regression.md"),
-                                        # sliderInput year built
-                                        sliderInput("reg_year_built",
-                                                    label = h4("Year built:"),
-                                                    min = 1700,
-                                                    max = 2016,
-                                                    value = c(1776, 2016)),
-                                        selectInput("reg_plot_type",
-                                                    label = "Show:",
-                                                    choices = c("College/University",
-                                                                "Multifamily Housing",
-                                                                "Office",
-                                                                "Laboratory"))
-                                 ),
-                                 
-                                 column(9,
-                                        br(),
-                                        plotOutput("regression"),
-                                        br()
-                                 ),
+                             column(3,
+                                    
+                                    includeMarkdown("md/3_regression.md"),
+                                    # sliderInput year built
+                                    sliderInput("reg_year_built",
+                                                label = h4("Year built:"),
+                                                min = 1700,
+                                                max = 2016,
+                                                value = c(1776, 2016)),
+                                    selectInput("reg_plot_type",
+                                                label = "Show:",
+                                                choices = c("College/University",
+                                                            "Multifamily Housing",
+                                                            "Office",
+                                                            "Laboratory"))
+                             ),
+                             
+                             column(9,
+                                    br(),
+                                    plotOutput("regression"),
+                                    br()
+                             ),
                              br(),
                              br(),
                              br()
-                               )
+                      )
                     )
            ),
            
@@ -188,10 +188,10 @@ navbarPage("Cambridge: Buildings & Energy",
                     fixedRow(
                       column(6,
                              includeMarkdown("md/4_about.md")
-                             ),
+                      ),
                       column(6,
                              imageOutput("about_img")
                       )
                     )
-               )
            )
+)

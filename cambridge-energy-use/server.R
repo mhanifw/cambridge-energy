@@ -29,9 +29,7 @@ shinyServer(function(input, output) {
     
     parcels_shp <- 
         read_rds("shiny-data/parcels.rds") %>%
-        clean_names() %>%
-        mutate(map_lot = ml) %>%
-        select(map_lot, shape_st_ar, shape_st_le, geometry)
+        clean_names() 
     
     parcel_index_shp <- 
         read_rds("shiny-data/parcel_index.rds") %>%
@@ -63,7 +61,7 @@ shinyServer(function(input, output) {
         granularity = input$granularity
         
         x <- 
-        energyuse %>%
+            energyuse %>%
             filter(reporting_year == granularity, report_type != "Child") %>%
             filter(year_built > min_built & year_built < max_built) %>%
             ggplot(aes(x = year_built)) +
@@ -91,7 +89,7 @@ shinyServer(function(input, output) {
                               kerosene = energy_source$kerosene,
                               total_kbtu = energy_source$total_kbtu)
         
-            energy_source %>%
+        energy_source %>%
             ggplot(aes(area = source_type, 
                        fill = source_type, 
                        label = primary_property_type_self_selected)) +
@@ -149,11 +147,11 @@ shinyServer(function(input, output) {
     # Output 3_a: Plotly Energy map
     
     output$energy_map <- renderPlotly ({
-
+        
         map_type <- switch(input$energy_map_type,
-                              energy_intensity = energy_map$parcel_energy_intensity,
-                              energy_total = energy_map$parcel_energy_use)
-
+                           energy_intensity = energy_map$parcel_energy_intensity,
+                           energy_total = energy_map$parcel_energy_use)
+        
         x <-
             energy_map %>%
             ggplot(aes(fill = map_type)) +
@@ -168,8 +166,8 @@ shinyServer(function(input, output) {
                 caption = "Data source: City of Cambridge, MA"
             )
         
-    ggplotly(x)
-
+        ggplotly(x)
+        
     })
     
     # Output 3_b: Plotly Water map
@@ -231,8 +229,8 @@ shinyServer(function(input, output) {
         min_built = input$reg_year_built[1]
         max_built = input$reg_year_built[2]
         selected = input$reg_plot_type
-            
-            energyuse %>%
+        
+        energyuse %>%
             filter(report_type != "Child" & reporting_year == 2018) %>%
             mutate(total_kbtu = as.numeric(source_energy_use_k_btu)) %>%
             filter(primary_property_type_self_selected == selected,
