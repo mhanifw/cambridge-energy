@@ -5,8 +5,8 @@ account: mhanifw
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1541994
-bundleId: 2634231
+bundleId: 2648051
 url: https://mhanifw.shinyapps.io/cambridge-energy-use/
-when: 1575335863.28282
+when: 1575687497.30827
 asMultiple: FALSE
 asStatic: FALSE
